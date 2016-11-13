@@ -126,10 +126,11 @@ def cmlGrado1(teamsStats):
 def mse(coeficients, teamStats):
     predictedWinRates = [ sum(teamsStat.stats * coeficients) for teamsStat in teamStats ]
     actualWinRates = [ teamsStat.winRate for teamStat in teamStats ]
+    #print max((np.asarray(predictedWinRates) - np.asarray(actualWinRates)) * (np.asarray(predictedWinRates) - np.asarray(actualWinRates)))
     return mean_squared_error(actualWinRates, predictedWinRates)
 
-def predict(teamStats, coeficients):
-    return sum(teamStats.stats * coeficients)
+def predict(team, coeficients):
+    return np.dot(team.stats, coeficients)
 
 # def cmlGrado1(teamsStats, factorsToUse):
 #     stats = []
@@ -158,10 +159,12 @@ if __name__ == "__main__":
     #print team.getStats([1,2,3])
     
     teams = buildTeamStatsFromParams()
+    teams = [x for x in teams if(x.year == 2016)]
     filterStats(teams, [4,7,10,14,22,23])
     coeficients = cmlGrado1(teams)
-    print predict(teams[0], coeficients)
-    print teams[0].winRate
+    print teams[0]
+    print mse(coeficients, teams)
+    graficarAproximacion(teams, coeficients)
     #teams = buildTeamStatsFromParams()
     #graficarMetricas(teams)
     #team = buildTeamStatsFromParams()[0]

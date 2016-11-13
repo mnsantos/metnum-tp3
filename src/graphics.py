@@ -1,16 +1,20 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from main import predict
 import sys
 
 #Para mejor visualizacion se espera que la primera lista este ordenada por winRate y la segunda mantenga el orden de la primera.
-def graficarAproximacion(teams, esperados):
+def graficarAproximacion(teams, coeficients):
+	teams.sort(key = lambda x: x.winRate)
 	fig = plt.figure()
 	#fig.suptitle('Precision: '+str(precision)+'\ne='+str(e), fontsize=15)
 	wr = []
+	wr_pred = []
 	for team in teams:
 		wr.append(team.winRate)
-	plt.plot(wr)
-	plt.plot(esperados)
+		wr_pred.append(predict(team, coeficients))
+	plt.plot(wr, 'r')
+	plt.plot(wr_pred, 'b')
 	plt.show()
 	#plt.savefig('results/'+fname+'.png', format='png')
 
