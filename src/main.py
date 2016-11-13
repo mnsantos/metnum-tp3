@@ -112,6 +112,10 @@ def findName(longName, year):
             if (row[0]==str(teamNumber)):
                 return row[1], teamNumber
 
+def filterStats(teamsStats, statsToUse):
+    for t in teamsStats:
+        t.stats = t.getStats(statsToUse)
+
 def cmlGrado1(teamsStats):
     stats = [ x.stats for x in teamsStats]
     winRates = [ x.winRate for x in teamsStats]
@@ -124,8 +128,8 @@ def mse(coeficients, teamStats):
     actualWinRates = [ teamsStat.winRate for teamStat in teamStats ]
     return mean_squared_error(actualWinRates, predictedWinRates)
 
-
-
+def predict(teamStats, coeficients):
+    return sum(teamStats.stats * coeficients)
 
 # def cmlGrado1(teamsStats, factorsToUse):
 #     stats = []
@@ -151,10 +155,17 @@ def test():
 
 if __name__ == "__main__":
     #print findName("PhoenixSuns", 2016)
+    #print team.getStats([1,2,3])
+    
     teams = buildTeamStatsFromParams()
-    graficarMetricas(teams)
-    team = buildTeamStatsFromParams()[0]
-    print team.getStats([1,2,3])
+    filterStats(teams, [4,7,10,14,22,23])
+    coeficients = cmlGrado1(teams)
+    print predict(teams[0], coeficients)
+    print teams[0].winRate
+    #teams = buildTeamStatsFromParams()
+    #graficarMetricas(teams)
+    #team = buildTeamStatsFromParams()[0]
+    #print team.getStats([1,2,3])
     #coeficients = cmlGrado1(teams)
     #print mse(coeficients, teams)
     #buildPlayerStatsFromParams()
