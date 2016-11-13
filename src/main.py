@@ -1,4 +1,5 @@
 import numpy as np
+from graphics import *
 import matplotlib.pyplot as plt
 import csv
 import os
@@ -24,20 +25,26 @@ class TeamStats:
         self.number = 0
         self.longName = ""
 
+    def getStats(self, numbers):
+        return [self.stats[n] for n in numbers]
+
     def __str__(self):
      return "name: " + str(self.name) + ", longName: " + str(self.longName) + ", number: " + str(self.number) + ", year: " + str(self.year) + ", winRate: " + str(self.winRate) + ", stats: " + str(self.stats)
 
 class PlayerStats:
     def __init__(self):
         self.year = 0
-        self.minutes = 0
         self.team = ""
+        self.age = 0
         self.name = ""
         self.position = ""
         self.stats = []
 
+    def getStats(self, numbers):
+        return [self.stats[n] for n in numbers]
+
     def __str__(self):
-        return "name: " + str(self.name) + ", position: " + str(self.position) + ", minutes: " + str(self.minutes) + ", team: " + str(self.team) + ", year: " + str(self.year) + ", stats: " + str(self.stats)
+        return "name: " + str(self.name) + ", age: " + str(self.age) + ", position: " + str(self.position) + ", team: " + str(self.team) + ", year: " + str(self.year) + ", stats: " + str(self.stats)
 
 def buildPlayerStatsFromParams():
     fo = open(paramsDir, "r")
@@ -45,8 +52,6 @@ def buildPlayerStatsFromParams():
     fo.close()
     startEnd = [int(x) for x in line.split(" ")]
     years = range(startEnd[0], startEnd[1]+1)
-    command = "./" + playerStatsScript + " playerStats"
-    os.system(command)
     i = -1
     players = []
     with open(playerStatsDir, 'rb') as csvfile:
@@ -59,11 +64,10 @@ def buildPlayerStatsFromParams():
                 player.year = years[i]
                 player.name = row[1]
                 player.position = row[2]
-                player.team = row[3]
-                player.minutes = row[4]
+                player.age = row[3]
+                player.team = row[4]
                 player.stats = [ float(x) for x in row[5:] ]
                 players.append(player)
-                print player
     return players
 
 def buildTeamStatsFromParams():
@@ -92,7 +96,6 @@ def buildTeamStatsFromParams():
             for row in winRateStats:
                 if (int(row[0]) == team.number):
                     team.winRate = float(row[1])
-                    print team
                     break
     return teams
 
@@ -109,6 +112,10 @@ def findName(longName, year):
             if (row[0]==str(teamNumber)):
                 return row[1], teamNumber
 
+def filterStats(teamsStats, statsToUse):
+    for t in teamsStats:
+        t.stats = t.getStats(statsToUse)
+
 def cmlGrado1(teamsStats):
     stats = [ x.stats for x in teamsStats]
     winRates = [ x.winRate for x in teamsStats]
@@ -121,7 +128,8 @@ def mse(coeficients, teamStats):
     actualWinRates = [ teamsStat.winRate for teamStat in teamStats ]
     return mean_squared_error(actualWinRates, predictedWinRates)
 
-
+def predict(teamStats, coeficients):
+    return sum(teamStats.stats * coeficients)
 
 # def cmlGrado1(teamsStats, factorsToUse):
 #     stats = []
@@ -147,7 +155,17 @@ def test():
 
 if __name__ == "__main__":
     #print findName("PhoenixSuns", 2016)
+    #print team.getStats([1,2,3])
+    
     teams = buildTeamStatsFromParams()
+    filterStats(teams, [4,7,10,14,22,23])
+    coeficients = cmlGrado1(teams)
+    print predict(teams[0], coeficients)
+    print teams[0].winRate
+    #teams = buildTeamStatsFromParams()
+    #graficarMetricas(teams)
+    #team = buildTeamStatsFromParams()[0]
+    #print team.getStats([1,2,3])
     #coeficients = cmlGrado1(teams)
     #print mse(coeficients, teams)
     #buildPlayerStatsFromParams()
