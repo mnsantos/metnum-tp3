@@ -1,4 +1,5 @@
 import numpy as np
+from graphics import *
 import matplotlib.pyplot as plt
 import csv
 import os
@@ -90,7 +91,6 @@ def buildTeamStatsFromParams():
             for row in winRateStats:
                 if (int(row[0]) == team.number):
                     team.winRate = float(row[1])
-                    print team
                     break
     return teams
 
@@ -145,7 +145,8 @@ def test():
 
 if __name__ == "__main__":
     #print findName("PhoenixSuns", 2016)
-    #teams = buildTeamStatsFromParams()
+    teams = buildTeamStatsFromParams()
+    graficarMetricas(teams)
     #coeficients = cmlGrado1(teams)
     #print mse(coeficients, teams)
-    buildPlayerStatsFromParams()
+    #buildPlayerStatsFromParams()
