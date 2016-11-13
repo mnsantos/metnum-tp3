@@ -24,6 +24,9 @@ class TeamStats:
         self.number = 0
         self.longName = ""
 
+    def getStats(self, numbers):
+        return [self.stats[n] for n in numbers]
+
     def __str__(self):
      return "name: " + str(self.name) + ", longName: " + str(self.longName) + ", number: " + str(self.number) + ", year: " + str(self.year) + ", winRate: " + str(self.winRate) + ", stats: " + str(self.stats)
 
@@ -35,6 +38,9 @@ class PlayerStats:
         self.name = ""
         self.position = ""
         self.stats = []
+
+    def getStats(self, numbers):
+        return [self.stats[n] for n in numbers]
 
     def __str__(self):
         return "name: " + str(self.name) + ", age: " + str(self.age) + ", position: " + str(self.position) + ", team: " + str(self.team) + ", year: " + str(self.year) + ", stats: " + str(self.stats)
@@ -61,7 +67,6 @@ def buildPlayerStatsFromParams():
                 player.team = row[4]
                 player.stats = [ float(x) for x in row[5:] ]
                 players.append(player)
-                print player
     return players
 
 def buildTeamStatsFromParams():
@@ -90,7 +95,6 @@ def buildTeamStatsFromParams():
             for row in winRateStats:
                 if (int(row[0]) == team.number):
                     team.winRate = float(row[1])
-                    print team
                     break
     return teams
 
@@ -121,6 +125,7 @@ def mse(coeficients, teamStats):
 
 
 
+
 # def cmlGrado1(teamsStats, factorsToUse):
 #     stats = []
 #     winRates = []
@@ -145,7 +150,8 @@ def test():
 
 if __name__ == "__main__":
     #print findName("PhoenixSuns", 2016)
-    #teams = buildTeamStatsFromParams()
+    team = buildTeamStatsFromParams()[0]
+    print team.getStats([1,2,3])
     #coeficients = cmlGrado1(teams)
     #print mse(coeficients, teams)
-    buildPlayerStatsFromParams()
+    #buildPlayerStatsFromParams()
