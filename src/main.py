@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import csv
 import os
 import sys
+from sklearn.metrics import mean_squared_error
 
 paramsDir="../stats/params.txt"
 toolsDir="../tools"
@@ -30,12 +31,13 @@ class PlayerStats:
     def __init__(self):
         self.year = 0
         self.team = ""
+        self.age = 0
         self.name = ""
         self.position = ""
         self.stats = []
 
     def __str__(self):
-        return "name: " + str(self.name) + ", position: " + str(self.position) + ", team: " + str(self.team) + ", year: " + str(self.year) + ", stats: " + str(self.stats)
+        return "name: " + str(self.name) + ", age: " + str(self.age) + ", position: " + str(self.position) + ", team: " + str(self.team) + ", year: " + str(self.year) + ", stats: " + str(self.stats)
 
 def buildPlayerStatsFromParams():
     fo = open(paramsDir, "r")
@@ -43,8 +45,6 @@ def buildPlayerStatsFromParams():
     fo.close()
     startEnd = [int(x) for x in line.split(" ")]
     years = range(startEnd[0], startEnd[1]+1)
-    command = "./" + playerStatsScript + " playerStats"
-    os.system(command)
     i = -1
     players = []
     with open(playerStatsDir, 'rb') as csvfile:
@@ -57,8 +57,9 @@ def buildPlayerStatsFromParams():
                 player.year = years[i]
                 player.name = row[1]
                 player.position = row[2]
-                player.team = row[3]
-                player.stats = [ float(x) for x in row[4:] ]
+                player.age = row[3]
+                player.team = row[4]
+                player.stats = [ float(x) for x in row[5:] ]
                 players.append(player)
                 print player
     return players
@@ -69,8 +70,6 @@ def buildTeamStatsFromParams():
     fo.close()
     startEnd = [int(x) for x in line.split(" ")]
     years = range(startEnd[0], startEnd[1]+1)
-    command = "./" + teamStatsScript + " teamStats"
-    os.system(command)
     i = -1
     teams = []
     with open(teamStatsDir, 'rb') as csvfile:
@@ -91,6 +90,7 @@ def buildTeamStatsFromParams():
             for row in winRateStats:
                 if (int(row[0]) == team.number):
                     team.winRate = float(row[1])
+                    print team
                     break
     return teams
 
@@ -108,16 +108,16 @@ def findName(longName, year):
                 return row[1], teamNumber
 
 def cmlGrado1(teamsStats):
-    stats = [ x.stats + [1] for x in teamsStats]
+    stats = [ x.stats for x in teamsStats]
     winRates = [ x.winRate for x in teamsStats]
     A = np.vstack(stats)
-    #print A
     coeficients = np.linalg.lstsq(A, winRates)[0]
-    print teamsStats[3]
-    print sum(teamsStats[3].stats * coeficients[0:-1]) + coeficients[-1]
-    #print coeficients
-
     return coeficients
+
+def mse(coeficients, teamStats):
+    predictedWinRates = [ sum(teamsStat.stats * coeficients) for teamsStat in teamStats ]
+    actualWinRates = [ teamsStat.winRate for teamStat in teamStats ]
+    return mean_squared_error(actualWinRates, predictedWinRates)
 
 
 
@@ -132,9 +132,6 @@ def cmlGrado1(teamsStats):
 #     coeficients = np.linalg.lstsq(A, winRates)[0]
 #     return coeficients
 
-def calcMse():
-    print "hola"
-
 def test():
     x = np.array([0, 1, 2, 3])
     y = np.array([-1, 0.2, 0.9, 2.1])
@@ -148,6 +145,7 @@ def test():
 
 if __name__ == "__main__":
     #print findName("PhoenixSuns", 2016)
-    # teams = buildTeamStatsFromParams()
-    # cmlGrado1(teams)
+    #teams = buildTeamStatsFromParams()
+    #coeficients = cmlGrado1(teams)
+    #print mse(coeficients, teams)
     buildPlayerStatsFromParams()
