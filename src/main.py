@@ -1,4 +1,5 @@
 import numpy as np
+from graphics import *
 import matplotlib.pyplot as plt
 import csv
 import os
@@ -161,5 +162,10 @@ if __name__ == "__main__":
     coeficients = cmlGrado1(teams)
     print predict(teams[0], coeficients)
     print teams[0].winRate
+    #teams = buildTeamStatsFromParams()
+    #graficarMetricas(teams)
+    #team = buildTeamStatsFromParams()[0]
+    #print team.getStats([1,2,3])
+    #coeficients = cmlGrado1(teams)
     #print mse(coeficients, teams)
     #buildPlayerStatsFromParams()

@@ -8,7 +8,6 @@ def graficarAproximacion(resultados, esperados):
 	#fig.suptitle('Precision: '+str(precision)+'\ne='+str(e), fontsize=15)
 	plt.plot(esperados)
 	plt.plot(resultados)
-	plt.legend(['esperados_calefaccion', 'esperados_refrigeracion', 'resultados_calefaccion', 'resultados_refrigeracion'], loc='upper left')
 	plt.show()
 	#plt.savefig('results/'+fname+'.png', format='png')
 
@@ -18,7 +17,7 @@ def graficarMetricas(teams):
 	#fig.suptitle('Precision: '+str(precision)+'\ne='+str(e), fontsize=15)
 	teams.sort(key = lambda x: x.winRate)
 	wr = []
-	sts = []
+	sts = [[] for y in range(len(teams[0].stats))]
 	minStats = np.zeros(len(teams[0].stats))
 	minStats[:] = teams[0].stats
 	maxStats = np.zeros(len(teams[0].stats))
@@ -37,21 +36,14 @@ def graficarMetricas(teams):
 	for team in teams:
 		wr.append(team.winRate)
 		for i in xrange(0,len(team.stats)):
-			#print minStats[i]
-			#print maxStats[i]
 			team.stats[i] = ((team.stats[i] - minStats[i]) / (maxStats[i] - minStats[i]))
-			#print i
-			#print team.stats[i]
-			#print stat
-			#input = sys.stdin.readline()
-		sts.append(team.stats)
-	#print 'len(wr): ', len(wr)
-	#print 'len(sts): ', len(sts)
-	plt.plot(wr, 'r')
-	plt.plot(sts)
-	#plt.legend(['esperados_calefaccion', 'esperados_refrigeracion', 'resultados_calefaccion', 'resultados_refrigeracion'], loc='upper left')
-	plt.show()
-	#plt.savefig('results/'+fname+'.png', format='png')
+			sts[i].append(team.stats[i])
+
+	for i in xrange(0,len(sts)):
+		print i
+		plt.plot(wr, 'r')
+		plt.plot(sts[i])
+		plt.show()
 
 def sortByWinRate(teams):
 	teams.sort(key = lambda x: x.winRate)
