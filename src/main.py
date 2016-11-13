@@ -30,14 +30,14 @@ class TeamStats:
 class PlayerStats:
     def __init__(self):
         self.year = 0
-        self.minutes = 0
         self.team = ""
+        self.age = 0
         self.name = ""
         self.position = ""
         self.stats = []
 
     def __str__(self):
-        return "name: " + str(self.name) + ", position: " + str(self.position) + ", minutes: " + str(self.minutes) + ", team: " + str(self.team) + ", year: " + str(self.year) + ", stats: " + str(self.stats)
+        return "name: " + str(self.name) + ", age: " + str(self.age) + ", position: " + str(self.position) + ", team: " + str(self.team) + ", year: " + str(self.year) + ", stats: " + str(self.stats)
 
 def buildPlayerStatsFromParams():
     fo = open(paramsDir, "r")
@@ -45,8 +45,6 @@ def buildPlayerStatsFromParams():
     fo.close()
     startEnd = [int(x) for x in line.split(" ")]
     years = range(startEnd[0], startEnd[1]+1)
-    command = "./" + playerStatsScript + " playerStats"
-    os.system(command)
     i = -1
     players = []
     with open(playerStatsDir, 'rb') as csvfile:
@@ -59,8 +57,8 @@ def buildPlayerStatsFromParams():
                 player.year = years[i]
                 player.name = row[1]
                 player.position = row[2]
-                player.team = row[3]
-                player.minutes = row[4]
+                player.age = row[3]
+                player.team = row[4]
                 player.stats = [ float(x) for x in row[5:] ]
                 players.append(player)
                 print player
@@ -147,7 +145,7 @@ def test():
 
 if __name__ == "__main__":
     #print findName("PhoenixSuns", 2016)
-    teams = buildTeamStatsFromParams()
+    #teams = buildTeamStatsFromParams()
     #coeficients = cmlGrado1(teams)
     #print mse(coeficients, teams)
-    #buildPlayerStatsFromParams()
+    buildPlayerStatsFromParams()
