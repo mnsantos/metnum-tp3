@@ -25,26 +25,10 @@ def graficarMetricas(teams):
 	teams.sort(key = lambda x: x.winRate)
 	wr = []
 	sts = [[] for y in range(len(teams[0].stats))]
-	minStats = np.zeros(len(teams[0].stats))
-	minStats[:] = teams[0].stats
-	maxStats = np.zeros(len(teams[0].stats))
-	maxStats[:] = teams[0].stats
-	print 'minStats: ', minStats
-	print 'maxStats: ', maxStats
-	for team in teams:
-		for i in xrange(1,len(team.stats)):
-			stat = team.stats[i]
-			if stat < minStats[i]:
-				minStats[i] = stat
-			if stat > maxStats[i]:
-				maxStats[i] = stat
-	print 'minStats: ', minStats
-	print 'maxStats: ', maxStats
+	normalizarStats(teams)
 	for team in teams:
 		wr.append(team.winRate)
-		for i in xrange(1,len(team.stats)):
-			team.stats[i] = ((team.stats[i] - minStats[i]) / (maxStats[i] - minStats[i]))
-			sts[i].append(team.stats[i])
+		sts[i].append(team.stats[i])
 
 	for i in xrange(1,len(sts)):
 		print i
@@ -59,6 +43,27 @@ def graficarMetricas(teams):
 	plt.plot(sts[20], 'c')
 	plt.show()
 
+def normalizarStats(teams):
+	minStats = np.zeros(len(teams[0].stats))
+	minStats[:] = teams[0].stats
+	maxStats = np.zeros(len(teams[0].stats))
+	maxStats[:] = teams[0].stats
+	#print 'minStats: ', minStats
+	#print 'maxStats: ', maxStats
+	for team in teams:
+		for i in xrange(0,len(team.stats)):
+			stat = team.stats[i]
+			if stat < minStats[i]:
+				minStats[i] = stat
+			if stat > maxStats[i]:
+				maxStats[i] = stat
+	#print 'minStats: ', minStats
+	#print 'maxStats: ', maxStats
+	for team in teams:
+		for i in xrange(0,len(team.stats)):
+			team.stats[i] = ((team.stats[i] - minStats[i]) / (maxStats[i] - minStats[i]))
+			#team.stats[i] = (team.stats[i]) / (maxStats[i])
+			#print team
 
 def sortByWinRate(teams):
 	teams.sort(key = lambda x: x.winRate)

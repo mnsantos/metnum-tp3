@@ -10,6 +10,7 @@ paramsDir="../stats/params.txt"
 toolsDir="../tools"
 playerStatsScript=toolsDir + "/obtenerStatsJugadores.sh"
 teamStatsScript=toolsDir + "/obtenerStatsEquipos.sh"
+opponentTeamStatsDir="../stats/opponent"
 teamStatsDir="../estadisticasEquipos/teamStats"
 playerStatsDir="../estadisticasJugadores/playerStats"
 abreviaturasDir="../stats/abreviaturas"
@@ -22,14 +23,18 @@ class TeamStats:
         self.winRate = 0
         self.name = ""
         self.stats = []
+        self.opponent = []
         self.number = 0
         self.longName = ""
 
     def getStats(self, numbers):
         return [self.stats[n] for n in numbers]
 
+    def getOpponent(self, numbers):
+        return [self.opponent[n] for n in numbers]
+
     def __str__(self):
-     return "name: " + str(self.name) + ", longName: " + str(self.longName) + ", number: " + str(self.number) + ", year: " + str(self.year) + ", winRate: " + str(self.winRate) + ", stats: " + str(self.stats)
+     return "name: " + str(self.name) + ", longName: " + str(self.longName) + ", number: " + str(self.number) + ", year: " + str(self.year) + ", winRate: " + str(self.winRate) + ", stats: " + str(self.stats) + ", opponent: " + str(self.opponent)
 
 class PlayerStats:
     def __init__(self):
@@ -120,6 +125,8 @@ def cmlGrado1(teamsStats):
     stats = [ x.stats for x in teamsStats]
     winRates = [ x.winRate for x in teamsStats]
     A = np.vstack(stats)
+    #print A
+    #print winRates
     coeficients = np.linalg.lstsq(A, winRates)[0]
     return coeficients
 
@@ -148,7 +155,7 @@ def test():
     y = np.array([-1, 0.2, 0.9, 2.1])
     A = np.vstack((x, np.ones(len(x)))).T
     m, c = np.linalg.lstsq(A, y)[0]
-    print m,c
+    #print m,c
     plt.plot(x, y, 'o', label='Original data', markersize=10)
     plt.plot(x, m*x + c, 'r', label='Fitted line')
     plt.legend()
@@ -159,11 +166,15 @@ if __name__ == "__main__":
     #print team.getStats([1,2,3])
     
     teams = buildTeamStatsFromParams()
-    teams = [x for x in teams if(x.year == 2016)]
-    filterStats(teams, [4,7,10,14,22,23])
+    teams = [x for x in teams if(2010 <= x.year <= 2016)]
+    filterStats(teams, [4, 7, 10, 14, 22, 23])
+    normalizarStats(teams)
     coeficients = cmlGrado1(teams)
-    print teams[0]
-    print mse(coeficients, teams)
+    #print teams[0]
+    print predict (teams[0], coeficients)
+    #print teams[0].winRate
+    #print coeficients
+    #print mse(coeficients, teams)
     graficarAproximacion(teams, coeficients)
     #teams = buildTeamStatsFromParams()
     #graficarMetricas(teams)
