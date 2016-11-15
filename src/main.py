@@ -12,7 +12,7 @@ paramsDir="../stats/params.txt"
 toolsDir="../tools"
 playerStatsScript=toolsDir + "/obtenerStatsJugadores.sh"
 teamStatsScript=toolsDir + "/obtenerStatsEquipos.sh"
-opponentTeamStatsDir="../stats/opponent"
+opponentTeamStatsDir="../estadisticasOponentes/statsOponentes"
 teamStatsDir="../estadisticasEquipos/teamStats"
 playerStatsDir="../estadisticasJugadores/playerStats"
 abreviaturasDir="../stats/abreviaturas"
@@ -84,7 +84,7 @@ def buildTeamStatsFromParams():
     startEnd = [int(x) for x in line.split(" ")]
     years = range(startEnd[0], startEnd[1]+1)
     i = -1
-    teams = []
+    teamsWithStats = []
     with open(teamStatsDir, 'rb') as csvfile:
         teamStats = csv.reader(csvfile, delimiter=',')
         for row in teamStats:
@@ -96,15 +96,35 @@ def buildTeamStatsFromParams():
                 team.name, team.number = findName(row[1], team.year)
                 team.longName = row[1]
                 team.stats = [ float(x) for x in row[2:] ]
-                teams.append(team)
-    for team in teams:
+                teamsWithStats.append(team)
+    i = -1  
+    teamsWithOpStats = []
+    with open(opponentTeamStatsDir, 'rb') as csvfile:
+        teamOpponentStats = csv.reader(csvfile, delimiter=',')
+        for row in teamOpponentStats:
+            if (row[0]=="Rk"):
+                i = i+1
+            else:
+                team = TeamStats()
+                team.year = years[i]
+                team.name, team.number = findName(row[1], team.year)
+                team.longName = row[1]
+                team.opponent = [ float(x) for x in row[2:] ]
+                teamsWithOpStats.append(team)
+    for t in teamsWithStats:
+        for t1 in teamsWithOpStats:
+            if (t1.year == t.year and t1.name == t.name):
+                t.opponent = t1.opponent
+                print t
+                break
+    for team in teamsWithStats:
         with open(winRateDir+"/leagues_NBA_"+str(team.year)+"_winrate.csv", 'rb') as csvfile:
             winRateStats = csv.reader(csvfile, delimiter=',')
             for row in winRateStats:
                 if (int(row[0]) == team.number):
                     team.winRate = float(row[1])
                     break
-    return teams
+    return teamsWithStats
 
 def findName(longName, year):
     teamNumber = 0
