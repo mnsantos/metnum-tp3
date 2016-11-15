@@ -11,6 +11,7 @@ toolsDir="../tools"
 playerStatsScript=toolsDir + "/obtenerStatsJugadores.sh"
 teamStatsScript=toolsDir + "/obtenerStatsEquipos.sh"
 opponentTeamStatsDir="../estadisticasOponentes/statsOponentes"
+miscTeamStatsDir="../estadisticasMiscelanias/statsMisc"
 teamStatsDir="../estadisticasEquipos/teamStats"
 playerStatsDir="../estadisticasJugadores/playerStats"
 abreviaturasDir="../stats/abreviaturas"
@@ -24,6 +25,7 @@ class TeamStats:
         self.name = ""
         self.stats = []
         self.opponent = []
+        self.misc = []
         self.number = 0
         self.longName = ""
 
@@ -34,7 +36,7 @@ class TeamStats:
         return [self.opponent[n] for n in numbers]
 
     def __str__(self):
-     return "name: " + str(self.name) + ", longName: " + str(self.longName) + ", number: " + str(self.number) + ", year: " + str(self.year) + ", winRate: " + str(self.winRate) + ", stats: " + str(self.stats) + ", opponent: " + str(self.opponent)
+     return "name: " + str(self.name) + ", longName: " + str(self.longName) + ", number: " + str(self.number) + ", year: " + str(self.year) + ", winRate: " + str(self.winRate) + ", stats: " + str(self.stats) + ", opponent: " + str(self.opponent) + ", misc: " + str(self.misc)
 
 class PlayerStats:
     def __init__(self):
@@ -109,12 +111,34 @@ def buildTeamStatsFromParams():
                 team.longName = row[1]
                 team.opponent = [ float(x) for x in row[2:] ]
                 teamsWithOpStats.append(team)
+    i = -1  
+    teamsWithMiscStats = []
+    with open(miscTeamStatsDir, 'rb') as csvfile:
+        teamMiscStats = csv.reader(csvfile, delimiter=',')
+        for row in teamMiscStats:
+            if (row[0]=="Rk"):
+                i = i+1
+            else:
+                team = TeamStats()
+                team.year = years[i]
+                team.name, team.number = findName(row[1], team.year)
+                team.longName = row[1]
+                team.misc = [ float(x) for x in row[2:22] ]
+                team.misc.append(float(row[23]))
+                teamsWithMiscStats.append(team)
     for t in teamsWithStats:
         for t1 in teamsWithOpStats:
             if (t1.year == t.year and t1.name == t.name):
                 t.opponent = t1.opponent
+                break
+        for t2 in teamsWithMiscStats:
+            if (t2.year == t.year and t2.name == t.name):
+                t.misc = t2.misc
                 print t
                 break
+#    for t in teamsWithStats:
+#        if (len(t.misc)==0 or len(t.opponent)==0):
+#            print "OJO"
     for team in teamsWithStats:
         with open(winRateDir+"/leagues_NBA_"+str(team.year)+"_winrate.csv", 'rb') as csvfile:
             winRateStats = csv.reader(csvfile, delimiter=',')
