@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import csv
 import os
 import sys
+import scipy
+from scipy.linalg import lstsq
 from sklearn.metrics import mean_squared_error
 
 paramsDir="../stats/params.txt"
@@ -166,18 +168,14 @@ if __name__ == "__main__":
     #print team.getStats([1,2,3])
     
     teams = buildTeamStatsFromParams()
-    teams = [x for x in teams if(2010 <= x.year <= 2016)]
-    filterStats(teams, [4, 7, 10, 14, 22, 23])
+    teams = [x for x in teams if(1987 <= x.year <= 2015)]
+    #filterStats(teams, [4, 7, 10, 14, 22, 23])
+    filterStats(teams, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23])
     normalizarStats(teams)
     coeficients = cmlGrado1(teams)
-    #print teams[0]
-    print predict (teams[0], coeficients)
-    #print teams[0].winRate
     #print coeficients
-    #print mse(coeficients, teams)
-    graficarAproximacion(teams, coeficients)
-    #teams = buildTeamStatsFromParams()
     #graficarMetricas(teams)
+    graficarAproximacion(teams, coeficients)
     #team = buildTeamStatsFromParams()[0]
     #print team.getStats([1,2,3])
     #coeficients = cmlGrado1(teams)
