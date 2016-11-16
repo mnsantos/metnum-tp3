@@ -136,7 +136,7 @@ def buildTeamStatsFromParams():
         for t2 in teamsWithMiscStats:
             if (t2.year == t.year and t2.name == t.name):
                 t.misc = t2.misc
-                print t
+                #print t
                 break
 #    for t in teamsWithStats:
 #        if (len(t.misc)==0 or len(t.opponent)==0):
@@ -168,7 +168,7 @@ def filterStats(teamsStats, statsToUse):
         t.stats = t.getStats(statsToUse)
 
 def cmlGrado1(teamsStats):
-    stats = [ x.stats for x in teamsStats]
+    stats = [ x.stats + x.opponent + x.misc for x in teamsStats]
     winRates = [ x.winRate for x in teamsStats]
     A = np.vstack(stats)
     #print A
@@ -183,7 +183,7 @@ def mse(coeficients, teamStats):
     return mean_squared_error(actualWinRates, predictedWinRates)
 
 def predict(team, coeficients):
-    return np.dot(team.stats, coeficients)
+    return np.dot((team.stats + team.opponent + team.misc), coeficients)
 
 # def cmlGrado1(teamsStats, factorsToUse):
 #     stats = []
@@ -214,8 +214,13 @@ if __name__ == "__main__":
     teams = buildTeamStatsFromParams()
     teams = [x for x in teams if(1987 <= x.year <= 2015)]
     #filterStats(teams, [4, 7, 10, 14, 22, 23])
-    filterStats(teams, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23])
-    normalizarStats(teams)
+    #filterStats(v, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23])6
+    filterStats(teams, [4,7,10])
+    #for t in teams:
+    #    t.stats[3] = t.stats[3]**3
+    for t in teams:
+        t.stats = [x **3 for x in t.stats]
+    #normalizarStats(teams)
     coeficients = cmlGrado1(teams)
     #print coeficients
     #graficarMetricas(teams)
