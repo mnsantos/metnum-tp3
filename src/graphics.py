@@ -29,10 +29,10 @@ def graficarAproximacion(teams, coeficients):
 	plt.plot(wr, 'r')
 	plt.plot(wr_pred, 'b')
 	plt.show()
-	print 'max: ', max_wr_pred
-	print teams[max_wr_pred_i]
-	print 'min: ', min_wr_pred
-	print teams[min_wr_pred_i]
+	#print 'max: ', max_wr_pred
+	#print teams[max_wr_pred_i]
+	#print 'min: ', min_wr_pred
+	#print teams[min_wr_pred_i]
 	#plt.savefig('results/'+fname+'.png', format='png')
 
 #Ordena la lista teams por winrate y grafica las metricas para ver si existe correlacion entre los valores
@@ -49,7 +49,7 @@ def graficarMetricas(teams):
 			sts[i].append(team.stats[i])
 
 	for i in xrange(0,len(sts)):
-		print i
+		#print i
 		plt.plot(wr, 'r')
 		plt.plot(sts[i], 'b')
 		plt.show()
