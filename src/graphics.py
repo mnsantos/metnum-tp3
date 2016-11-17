@@ -42,17 +42,38 @@ def graficarMetricas(teams):
 	teams.sort(key = lambda x: x.winRate)
 	wr = []
 	sts = [[] for y in range(len(teams[0].stats))]
+	opponents = [[] for y in range(len(teams[0].opponent))]
+	miscs = [[] for y in range(len(teams[0].misc))]
+	
 	normalizarStats(teams)
+	
 	for team in teams:
 		wr.append(team.winRate)
 		for i in xrange(0,len(team.stats)):
 			sts[i].append(team.stats[i])
+		for i in xrange(0,len(team.opponent)):
+			opponents[i].append(team.opponent[i])
+		for i in xrange(0,len(team.misc)):
+			miscs[i].append(team.misc[i])
 
 	for i in xrange(0,len(sts)):
 		print i
 		plt.plot(wr, 'r')
 		plt.plot(sts[i], 'b')
 		plt.show()
+
+	for i in xrange(0,len(opponents)):
+		print i
+		plt.plot(wr, 'r')
+		plt.plot(opponents[i], 'b')
+		plt.show()
+
+	for i in xrange(0,len(miscs)):
+		print i
+		plt.plot(wr, 'r')
+		plt.plot(miscs[i], 'b')
+		plt.show()
+
 
 
 def normalizarStats(teams):
@@ -64,6 +85,22 @@ def normalizarStats(teams):
 	print 'minStats: ', minStats
 	print 'maxStats: ', maxStats
 	print 'meanStats: ', meanStats
+	minOpponent = np.zeros(len(teams[0].opponent))
+	minOpponent[:] = teams[0].opponent
+	maxOpponent = np.zeros(len(teams[0].opponent))
+	maxOpponent[:] = teams[0].opponent
+	meanOpponent = np.zeros(len(teams[0].opponent))
+	print 'minOpponent: ', minOpponent
+	print 'maxOpponent: ', maxOpponent
+	print 'meanOpponent: ', meanOpponent
+	minMisc = np.zeros(len(teams[0].misc))
+	minMisc[:] = teams[0].misc
+	maxMisc = np.zeros(len(teams[0].misc))
+	maxMisc[:] = teams[0].misc
+	meanMisc = np.zeros(len(teams[0].misc))
+	print 'minMisc: ', minMisc
+	print 'maxMisc: ', maxMisc
+	print 'meanMisc: ', meanMisc
 	for team in teams:
 		for i in xrange(0,len(team.stats)):
 			stat = team.stats[i]
@@ -72,16 +109,40 @@ def normalizarStats(teams):
 			if stat > maxStats[i]:
 				maxStats[i] = stat
 			meanStats[i] += stat/len(teams)
+		for i in xrange(0,len(team.opponent)):
+			opponent = team.opponent[i]
+			if opponent < minOpponent[i]:
+				minOpponent[i] = opponent
+			if opponent > maxOpponent[i]:
+				maxOpponent[i] = opponent
+			meanOpponent[i] += opponent/len(teams)
+		for i in xrange(0,len(team.misc)):
+			misc = team.misc[i]
+			if misc < minMisc[i]:
+				minMisc[i] = misc
+			if misc > maxMisc[i]:
+				maxMisc[i] = misc
+			meanMisc[i] += misc/len(teams)
 	print 'minStats: ', minStats
 	print 'maxStats: ', maxStats
 	print 'meanStats: ', meanStats
+	print 'minOpponent: ', minOpponent
+	print 'maxOpponent: ', maxOpponent
+	print 'meanOpponent: ', meanOpponent
+	print 'minMisc: ', minMisc
+	print 'maxMisc: ', maxMisc
+	print 'meanMisc: ', meanMisc
 	for team in teams:
 		for i in xrange(0,len(team.stats)):
 			team.stats[i] = ((team.stats[i] - minStats[i]) / (maxStats[i] - minStats[i]))
-			media_normalizada = ((meanStats[i] - minStats[i]) / (maxStats[i] - minStats[i]))
+			media_normalizada_stats = ((meanStats[i] - minStats[i]) / (maxStats[i] - minStats[i]))
+		for i in xrange(0,len(team.opponent)):
+			team.opponent[i] = ((team.opponent[i] - minOpponent[i]) / (maxOpponent[i] - minOpponent[i]))
+			media_normalizada_opponent = ((meanOpponent[i] - minOpponent[i]) / (maxOpponent[i] - minOpponent[i]))
+		for i in xrange(0,len(team.misc)):
+			team.misc[i] = ((team.misc[i] - minMisc[i]) / (maxMisc[i] - minMisc[i]))
+			media_normalizada_misc = ((meanMisc[i] - minMisc[i]) / (maxMisc[i] - minMisc[i]))
 			#team.stats[i] = podar(team.stats[i], media_normalizada, 80)
-			#team.stats[i] = (team.stats[i]) / (maxStats[i])
-			#print team
 
 def podar(stat, mean, perc):
 	print stat
