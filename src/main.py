@@ -169,11 +169,11 @@ def findName(longName, year):
 
 def filterStats(teamsStats, statsToUse, opponentStatsToUse, miscStatsToUse):
     for t in teamsStats:
-        if len(statsToUse) != 0:
+        if len(statsToUse) != None:
             t.stats = t.getStats(statsToUse)
-        if len(opponentStatsToUse) != 0:
+        if len(opponentStatsToUse) != None:
             t.opponent = t.getOpponent(opponentStatsToUse)
-        if len(miscStatsToUse) != 0:
+        if len(miscStatsToUse) != None:
             t.misc = t.getMisc(miscStatsToUse)
 
 
@@ -254,20 +254,21 @@ if __name__ == "__main__":
     #print team.getStats([1,2,3])
     
     teams = buildTeamStatsFromParams()
+    filterStats(teams, [], [], [6, 7])
+    
     teamsAnteriores = [x for x in teams if(2009 <= x.year <= 2014)]
     teamsActuales = [x for x in teams if(x.year == 2015)]
     teamsFuturos = [x for x in teams if(x.year == 2016)]
     acumularListas(teamsActuales, teamsAnteriores)
     #filterStats(teams, [4, 7, 10, 14, 22, 23])
     #filterStats(v, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23])6
-    #filterStats(teams, [4, 7, 10, 22, 23, 2, 5, 15], [4, 10, 2, 17, 22, 23], [1, 2, 3, 5, 6, 7, 11, 12, 16])
     #for t in teams:
     #    t.stats[3] = t.stats[3]**3
     #for t in teams:
     #    t.stats = [x **3 for x in t.stats]
     #normalizarStats(teams)
     coeficients = cmlGrado1(teamsActuales)
-    #print coeficients
+    print coeficients
     print mse(coeficients, teamsActuales)
     #print coeficients
     #graficarMetricas(teams)
