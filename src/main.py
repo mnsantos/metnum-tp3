@@ -24,6 +24,7 @@ class TeamStats:
     def __init__(self):
         self.year = 0
         self.winRate = 0
+        self.winRatePred = 0
         self.name = ""
         self.stats = []
         self.opponent = []
@@ -253,8 +254,9 @@ if __name__ == "__main__":
     #print team.getStats([1,2,3])
     
     teams = buildTeamStatsFromParams()
-    teamsAnteriores = [x for x in teams if(2012 <= x.year <= 2014)]
+    teamsAnteriores = [x for x in teams if(2009 <= x.year <= 2014)]
     teamsActuales = [x for x in teams if(x.year == 2015)]
+    teamsFuturos = [x for x in teams if(x.year == 2016)]
     acumularListas(teamsActuales, teamsAnteriores)
     #filterStats(teams, [4, 7, 10, 14, 22, 23])
     #filterStats(v, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23])6
@@ -269,7 +271,8 @@ if __name__ == "__main__":
     print mse(coeficients, teamsActuales)
     #print coeficients
     #graficarMetricas(teams)
-    graficarAproximacion(teamsActuales, coeficients)
+    #graficarAproximacion(teamsActuales, coeficients)
+    graficarPrediccion(teamsActuales, teamsFuturos, coeficients)
     #team = buildTeamStatsFromParams()[0]
     #print team.getStats([1,2,3])
     #coeficients = cmlGrado1(teams)
