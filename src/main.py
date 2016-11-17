@@ -37,6 +37,9 @@ class TeamStats:
     def getOpponent(self, numbers):
         return [self.opponent[n] for n in numbers]
 
+    def getMisc(self, numbers):
+        return [self.misc[n] for n in numbers]
+
     def __str__(self):
      return "name: " + str(self.name) + ", longName: " + str(self.longName) + ", number: " + str(self.number) + ", year: " + str(self.year) + ", winRate: " + str(self.winRate) + ", stats: " + str(self.stats) + ", opponent: " + str(self.opponent) + ", misc: " + str(self.misc)
 
@@ -163,9 +166,15 @@ def findName(longName, year):
             if (row[0]==str(teamNumber)):
                 return row[1], teamNumber
 
-def filterStats(teamsStats, statsToUse):
+def filterStats(teamsStats, statsToUse, opponentStatsToUse, miscStatsToUse):
     for t in teamsStats:
-        t.stats = t.getStats(statsToUse)
+        if len(statsToUse) != 0:
+            t.stats = t.getStats(statsToUse)
+        if len(opponentStatsToUse) != 0:
+            t.opponent = t.getOpponent(opponentStatsToUse)
+        if len(miscStatsToUse) != 0:
+            t.misc = t.getMisc(miscStatsToUse)
+
 
 def cmlGrado1(teamsStats):
     stats = [ x.stats + x.opponent + x.misc for x in teamsStats]
@@ -215,7 +224,7 @@ if __name__ == "__main__":
     teams = [x for x in teams if(1987 <= x.year <= 2015)]
     #filterStats(teams, [4, 7, 10, 14, 22, 23])
     #filterStats(v, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23])6
-    filterStats(teams, [4,7,10])
+    filterStats(teams, [4, 7, 10, 22, 23, 2, 5, 15], [4, 10, 2, 17, 22, 23], [1, 2, 3, 5, 6, 7, 11, 12, 16])
     #for t in teams:
     #    t.stats[3] = t.stats[3]**3
     #for t in teams:
