@@ -177,8 +177,10 @@ def filterStats(teamsStats, statsToUse, opponentStatsToUse, miscStatsToUse):
 
 
 def cmlGrado1(teamsStats):
+    print len(teamsStats)
     stats = [ x.stats + x.opponent + x.misc for x in teamsStats]
     winRates = [ x.winRate for x in teamsStats]
+
     A = np.vstack(stats)
     #print A
     #print winRates
@@ -206,13 +208,24 @@ def predictTeam(preTeam, statss, opponents, miscs, s_coeficients, o_coeficients,
 
 def acumularListas(teamsActuales, teamsAnteriores):
     teamsAnteriores.sort(key = lambda x: x.year)
+    tamMinimo = 0
     for teamActual in teamsActuales:
         for teamAnterior in teamsAnteriores:
             if (teamAnterior.name == teamActual.name):
                 teamActual.stats = teamActual.stats + teamAnterior.stats
                 teamActual.opponent = teamActual.opponent + teamAnterior.opponent
                 teamActual.misc = teamActual.misc + teamAnterior.misc
-
+        tamListas = (len(teamActual.stats)+len(teamActual.opponent)+len(teamActual.misc))
+        if tamMinimo < tamListas:
+            tamMinimo = tamListas
+    for teamActual in teamsActuales:
+        tamListas = (len(teamActual.stats)+len(teamActual.opponent)+len(teamActual.misc))
+        if tamListas < tamMinimo:
+            teamsActuales.remove(teamActual)
+        #else:
+            #print len(teamActual.stats)
+            #print len(teamActual.opponent)
+            #print len(teamActual.misc)
 # def cmlGrado1(teamsStats, factorsToUse):
 #     stats = []
 #     winRates = []
