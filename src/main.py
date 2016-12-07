@@ -7,6 +7,7 @@ import sys
 import scipy
 from scipy.linalg import lstsq
 from sklearn.metrics import mean_squared_error
+import copy
 
 def filterStats(teamsStats, statsToUse, opponentStatsToUse, miscStatsToUse):
     for t in teamsStats:
@@ -79,6 +80,31 @@ def acumularListas(teamsActuales, teamsAnteriores):
 #     coeficients = np.linalg.lstsq(A, winRates)[0]
 #     return coeficients
 
+def crossvalidation_por_equipo(teams, years):
+    MSE = []
+    cantidad_bloques_a_testear = int((2016-1987) / years)
+    tamanio_bloque = years
+    for actual_a_testear in range(1987 + tamanio_bloque, 2017):
+        print actual_a_testear
+        teams_local = copy.deepcopy(teams)
+        teamsAnteriores = []
+        teamsActuales = []
+        teamsFuturos = []
+        inicio_periodo_a_estudiar = actual_a_testear - tamanio_bloque
+        fin_periodo_a_estudiar = actual_a_testear - 1
+        teamsAnteriores = [x for x in teams_local if(inicio_periodo_a_estudiar <= x.year <= fin_periodo_a_estudiar-1)]
+        teamsActuales = [x for x in teams_local if(x.year == fin_periodo_a_estudiar)]
+        teamsFuturos = [x for x in teams_local if(x.year == actual_a_testear)]
+        acumularListas(teamsActuales, teamsAnteriores)
+        for i in teamsActuales:
+            if (len(i.stats) != len(teamsActuales[0].stats)) and (len(i.misc) != len(teamsActuales[0].misc) and len(i.opponent)) != (len(teamsActuales[0].opponent)):
+                print i#
+                teamsActuales.remove(i)
+        coeficients = cmlGrado1(teamsActuales)
+        graficarPrediccion(teamsActuales, teamsFuturos, coeficients)
+        #MSE.append(mse(coeficients, teamsFuturos))
+    return MSE
+
 def test():
     x = np.array([0, 1, 2, 3])
     y = np.array([-1, 0.2, 0.9, 2.1])
@@ -95,6 +121,11 @@ if __name__ == "__main__":
     #print team.getStats([1,2,3])
     
     teams = read()
+
+    #teams = buildTeamStatsFromParams()
+    filterStats(teams, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], [6, 7])
+    MSE = crossvalidation_por_equipo(teams, 3)
+    print MSE
 
     #filterStats(teams, [], [], [6, 7])
     
