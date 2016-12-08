@@ -3,6 +3,17 @@ import numpy as np
 from main import predict
 import sys
 
+def graficar_listas(teamsFuturos, predicted_winRates, actual_winRates):
+	labels = [team.name for team in teamsFuturos]
+	plt.plot(actual_winRates, 'ro')
+	plt.plot(predicted_winRates, 'bs')
+	plt.plot(extra_list, 'gt')
+	plt.xticks(range(1, len(actual_winRates)), labels, rotation='vertical')
+	plt.plot(wr_pred, 'bs')
+	plt.margins(0.2)
+	plt.show()
+
+
 #Para mejor visualizacion se espera que la primera lista este ordenada por winRate y la segunda mantenga el orden de la primera.
 def graficarAproximacion(teams, coeficients):
 	teams.sort(key = lambda x: x.winRate)
@@ -36,6 +47,7 @@ def graficarPrediccion(teamsActuales, teamsFuturos, coeficients):
 	#fig.suptitle('Precision: '+str(precision)+'\ne='+str(e), fontsize=15)
 	wr = []
 	wr_pred = []
+	labels = []
 	for teamFuturo in teamsFuturos:
 		found = False
 		for teamActual in teamsActuales:
@@ -45,9 +57,12 @@ def graficarPrediccion(teamsActuales, teamsFuturos, coeficients):
 		if found:
 			wr.append(teamFuturo.winRate)
 			wr_pred.append(teamFuturo.winRatePred)
+			labels.append(teamFuturo.name)
 
-	plt.plot(wr, 'r')
-	plt.plot(wr_pred, 'b')
+	plt.plot(wr, 'ro')
+	plt.xticks(range(1, len(wr)), labels, rotation='vertical')
+	plt.plot(wr_pred, 'bs')
+	plt.margins(0.2)
 	plt.show()
 
 

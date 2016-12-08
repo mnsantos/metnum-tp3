@@ -31,6 +31,20 @@ def cmlGrado1(teamsStats):
     coeficients = np.linalg.lstsq(A, winRates)[0]
     return coeficients
 
+def cmlGrado1ver2(teams, offset):
+    stats = []
+    winRates = []
+    for team in teams:
+        for team2 in teams:
+            if team.name == team2.name and team.year+offset == team2.year:
+                stats.append(team.stats + team.opponent + team.misc)
+                winRates.append(team2.winRate)
+    A = np.vstack(stats)
+    #print A
+    #print winRates
+    coeficients = np.linalg.lstsq(A, winRates)[0]
+    return coeficients
+
 def mse(coeficients, teamsActuales, teamsFuturos):
     predictedWinRates = [ predict(team, coeficients) for team in teamsActuales ]
     actualWinRates = [ team.winRate for team in teamsFuturos ]
@@ -86,16 +100,18 @@ def crossvalidation_por_equipo(teams, years):
         inicio_periodo_a_estudiar = actual_a_testear - tamanio_bloque
         fin_periodo_a_estudiar = actual_a_testear - 1
         teamsAnteriores = [x for x in teams_local if(inicio_periodo_a_estudiar <= x.year <= fin_periodo_a_estudiar-1)]
-        #teamsAnteriores = filtrarTeamsPorYears(teamsAnteriores, years-1)
         teamsActuales = [x for x in teams_local if(x.year == fin_periodo_a_estudiar)]
         teamsFuturos = [x for x in teams_local if(x.year == actual_a_testear)]
         teamsFuturos, teamsActuales = filtrarTeamsPorNombres(teamsFuturos, teamsActuales)
-        coeficients = cmlGrado1(teamsAnteriores)
+        coeficients = cmlGrado1ver2(teamsAnteriores, 1)
         year_mse = mse(coeficients, teamsActuales, teamsFuturos)
+        graficarAproximacion(teamsFuturos, coeficients)
         if year_mse > 1:
-            print actual_a_testear, coeficients
-            graficarPrediccion(teamsActuales, teamsFuturos, coeficients)
+            print actual_a_testear
         else:
+            print len(teamsActuales)
+            actualWinRates = [team.winRate for team in teamsFuturos]
+            predictedWinRates = [predict(team, coeficients) for team in teamsFuturos]
             MSE.append(year_mse)
     #return MSE
     return np.average(MSE)
@@ -114,5 +130,5 @@ def test():
 if __name__ == "__main__":
     teams = read()
     filterStats(teams, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], [6, 7])
-    MSE = crossvalidation_por_equipo(teams, 3)
+    MSE = crossvalidation_por_equipo(teams, 9)
     print MSE
