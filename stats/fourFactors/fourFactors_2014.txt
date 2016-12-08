@@ -28,3 +28,4 @@ OrlandoMagic,.3032
 UtahJazz,.3096
 MilwaukeeBucks,.3116
 Philadelphia76ers,.3051
+asd,0
