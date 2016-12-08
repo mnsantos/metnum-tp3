@@ -183,7 +183,7 @@ def crossvalidation_por_players(teams, years):
 
 def obtenerJugadorPromedio(teams):
     for t in teams:
-        newPlayers = [p for p in t.players if not(p.stats[2])==0]
+        newPlayers = [p for p in t.players if not(p.stats[2]==0)]
         t.players = newPlayers
     for t in teams:
         statsLen = len(t.players[0].stats)
