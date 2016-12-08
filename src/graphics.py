@@ -16,6 +16,50 @@ def graficar_listas(teamsFuturos, predicted_winRates, actual_winRates):
 	plt.margins(0.2)
 	plt.show()
 
+def scatter_listas(teamsFuturos, predicted_winRates, actual_winRates):
+	labels = [team.name for team in teamsFuturos]
+	ffactors = [team.fourFactors for team in teamsFuturos]
+	per = [team.per for team in teamsFuturos]
+	#plt.xticks(range(1, len(actual_winRates)), labels, rotation='vertical')
+	plt.title('ffactors')
+	plt.scatter(ffactors, predicted_winRates, c='b', alpha=0.5)
+	#plt.scatter(ffactors, actual_winRates, c='r', alpha=0.5)
+	for label, x, y in zip(labels, ffactors, predicted_winRates):
+		plt.annotate(
+		label, 
+		xy = (x, y), xytext = (-20, 20),
+		textcoords = 'offset points', ha = 'right', va = 'bottom',
+		bbox = dict(boxstyle = 'round,pad=0.1', fc = 'yellow', alpha = 0.5),
+		arrowprops = dict(arrowstyle = '->', connectionstyle = 'arc3,rad=0'))
+	# for label, x, y in zip(labels, ffactors, actual_winRates):
+		# plt.annotate(
+		# label, 
+		# xy = (x, y), xytext = (-20, 20),
+		# textcoords = 'offset points', ha = 'right', va = 'bottom',
+		# bbox = dict(boxstyle = 'round,pad=0.1', fc = 'yellow', alpha = 0.5),
+		# arrowprops = dict(arrowstyle = '->', connectionstyle = 'arc3,rad=0'))
+	plt.margins(0.2)
+	plt.show()
+	plt.title('per')
+	plt.scatter(per, predicted_winRates, c='b', alpha=0.5)
+	#plt.scatter(per, actual_winRates, c='r', alpha=0.5)
+	for label, x, y in zip(labels, per, predicted_winRates):
+		plt.annotate(
+		label, 
+		xy = (x, y), xytext = (-20, 20),
+		textcoords = 'offset points', ha = 'right', va = 'bottom',
+		bbox = dict(boxstyle = 'round,pad=0.1', fc = 'yellow', alpha = 0.5),
+		arrowprops = dict(arrowstyle = '->', connectionstyle = 'arc3,rad=0'))
+	# for label, x, y in zip(labels, per, actual_winRates):
+	# 	plt.annotate(
+	# 	label, 
+	# 	xy = (x, y), xytext = (-20, 20),
+	# 	textcoords = 'offset points', ha = 'right', va = 'bottom',
+	# 	bbox = dict(boxstyle = 'round,pad=0.1', fc = 'yellow', alpha = 0.5),
+	# 	arrowprops = dict(arrowstyle = '->', connectionstyle = 'arc3,rad=0'))
+	plt.margins(0.2)
+	plt.show()
+
 
 #Para mejor visualizacion se espera que la primera lista este ordenada por winRate y la segunda mantenga el orden de la primera.
 def graficarAproximacion(teams, coeficients):

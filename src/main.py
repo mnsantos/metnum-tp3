@@ -89,11 +89,12 @@ def predict(team, coeficients):
     return np.dot((team.stats + team.opponent + team.misc), coeficients)
 
 def predictPlayers(team, coeficients):
-    wr_players = []
-    for player in team.players:
-        wr_player = np.dot(player.stats, coeficients)
-        wr_players.append(wr_player)
-    return np.average(wr_players)
+	wr_players = []
+	for player in team.players:
+		wr_player = np.dot(player.stats, coeficients)
+		if wr_player > 0.2 and wr_player < 0.9:
+			wr_players.append(wr_player)
+	return np.average(wr_players)
 
 def predictTeam(preTeam, statss, opponents, miscs, s_coeficients, o_coeficients, m_coeficients, w_coeficients):
     team = TeamStats()
@@ -168,16 +169,16 @@ def crossvalidation_por_players(teams, years):
         teamsActuales = [x for x in teams if(x.year == fin_periodo_a_estudiar)]
         teamsFuturos = [x for x in teams if(x.year == actual_a_testear)]
         teamsFuturos, teamsActuales = filtrarTeamsPorNombres(teamsFuturos, teamsActuales)
-        #coeficients = cmlGrado1verPlavers(teamsAnteriores, 1)
-        coeficients = cmlGrado1Players(teamsAnteriores)
-        year_mse = msePlayers(coeficients, teamsActuales, teamsFuturos)
-        #if year_mse > 1:
-            #print actual_a_testear
-        #else:
-        actualWinRates = [team.winRate for team in teamsFuturos]
-        predictedWinRates = [predictPlayers(team, coeficients) for team in teamsFuturos]
-        graficar_listas(teamsFuturos, predictedWinRates, actualWinRates)
-        MSE.append(year_mse)
+        coeficients = cmlGrado1verTeams(teamsAnteriores, 1)
+        year_mse = mse(coeficients, teamsActuales, teamsFuturos)
+        if year_mse > 1:
+            print actual_a_testear
+        else:
+            actualWinRates = [team.winRate for team in teamsFuturos]
+            predictedWinRates = [predict(team, coeficients) for team in teamsFuturos]
+            graficar_listas(teamsFuturos, predictedWinRates, actualWinRates)
+            scatter_listas(teamsFuturos, predictedWinRates, actualWinRates)
+            MSE.append(year_mse)
     return np.average(MSE)
 
 def obtenerJugadorPromedio(teams):
