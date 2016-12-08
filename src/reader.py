@@ -15,12 +15,16 @@ playerStatsDir="../estadisticasJugadores/playerStats"
 abreviaturasDir="../stats/abreviaturas"
 equiposDir="../stats/equipos"
 winRateDir="../stats/winrate"
+fourFactorsDir="../stats/fourFactors/fourFactors_"
+perDir="../stats/playerEfficiencyRate/per_"
 
 def read():
-	teams = buildTeamsFromFiles()
-	players = buildPlayersFromFiles()
-	merge(teams, players)
-	return teams
+    teams = buildTeamsFromFiles()
+    players = buildPlayersFromFiles()
+    merge(teams, players)
+    readFourFactorsData(teams)
+    readPerData(teams)
+    return teams
 
 def buildTeamsFromFiles():
     fo = open(paramsDir, "r")
@@ -131,12 +135,30 @@ def buildPlayersFromFiles():
     return players
 
 def merge(teams, players):
-	i = 0
-	for player in players:
-		for team in teams:
-			if (player.team == team.name and player.year == team.year):
-				i = i+1
-				team.players.append(player)
-				break
-	if not(i == len(players)):
-		"WARN: Hay jugadores para los que no se encontro equipo"
+    i = 0
+    for player in players:
+        for team in teams:
+            if (player.team == team.name and player.year == team.year):
+                i = i+1
+                team.players.append(player)
+                break
+    if not(i == len(players)):
+        "WARN: Hay jugadores para los que no se encontro equipo"
+
+def readFourFactorsData(teams):
+    for t in teams:
+        with open(fourFactorsDir+str(t.year)+".txt", 'rb') as csvfile:
+            fourFactorsStats = csv.reader(csvfile, delimiter=',')
+            for row in fourFactorsStats:
+                if t.longName == row[0]:
+                    t.fourFactors = float(row[1])
+
+def readPerData(teams):
+    for t in teams:
+        with open(perDir+str(t.year)+".txt", 'rb') as csvfile:
+            perStats = csv.reader(csvfile, delimiter=',')
+            for row in perStats:
+                if t.number == int(row[0]):
+                    t.per = float(row[1])
+
+

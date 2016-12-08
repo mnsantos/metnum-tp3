@@ -28,3 +28,4 @@ LosAngelesLakers,.3008
 MinnesotaTimberwolves,.3106
 Philadelphia76ers,.3038
 NewYorkKnicks,.2990
+asd,0

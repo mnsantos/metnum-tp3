@@ -4,6 +4,8 @@ class Team:
         self.winRate = 0
         self.winRatePred = 0
         self.name = ""
+        self.fourFactors = 0
+        self.per = 0
         self.stats = []
         self.opponent = []
         self.misc = []

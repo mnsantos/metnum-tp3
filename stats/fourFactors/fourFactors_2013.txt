@@ -28,3 +28,4 @@ ClevelandCavaliers,.3079
 PhoenixSuns,.3066
 OrlandoMagic,.3013
 CharlotteBobcats,.3033
+asd,0

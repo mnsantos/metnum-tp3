@@ -28,3 +28,4 @@ PhoenixSuns,.3142
 BrooklynNets,.3069
 LosAngelesLakers,.2956
 Philadelphia76ers,.3009
+asd,0
