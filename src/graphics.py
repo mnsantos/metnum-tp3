@@ -5,11 +5,14 @@ import sys
 
 def graficar_listas(teamsFuturos, predicted_winRates, actual_winRates):
 	labels = [team.name for team in teamsFuturos]
+	#ffactors = [team.fourFactors for team in teamsFuturos]
+	#per = [team.per for team in teamsFuturos]
 	plt.plot(actual_winRates, 'ro')
 	plt.plot(predicted_winRates, 'bs')
-	plt.plot(extra_list, 'gt')
+	#plt.plot(ffactors, 'gt')
+	#plt.plot(per, 'yt')
 	plt.xticks(range(1, len(actual_winRates)), labels, rotation='vertical')
-	plt.plot(wr_pred, 'bs')
+	plt.plot(predicted_winRates, 'bs')
 	plt.margins(0.2)
 	plt.show()
 
