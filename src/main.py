@@ -92,7 +92,8 @@ def predictPlayers(team, coeficients):
 	wr_players = []
 	for player in team.players:
 		wr_player = np.dot(player.stats, coeficients)
-		wr_players.append(wr_player)
+		if wr_player > 0.2 and wr_player < 0.9:
+			wr_players.append(wr_player)
 	return np.average(wr_players)
 
 def predictTeam(preTeam, statss, opponents, miscs, s_coeficients, o_coeficients, m_coeficients, w_coeficients):
@@ -146,11 +147,12 @@ def crossvalidation_por_equipo(teams, years):
 		coeficients = cmlGrado1verTeams(teamsAnteriores, 1)
 		year_mse = mse(coeficients, teamsActuales, teamsFuturos)
 		if year_mse > 1:
-			#print actual_a_testear
-			one = 1
+			print actual_a_testear
 		else:
 			actualWinRates = [team.winRate for team in teamsFuturos]
 			predictedWinRates = [predict(team, coeficients) for team in teamsFuturos]
+			graficar_listas(teamsFuturos, predictedWinRates, actualWinRates)
+			scatter_listas(teamsFuturos, predictedWinRates, actualWinRates)
 			MSE.append(year_mse)
 	return np.average(MSE)
 
@@ -176,7 +178,8 @@ def crossvalidation_por_players(teams, years):
 		#else:
 		actualWinRates = [team.winRate for team in teamsFuturos]
 		predictedWinRates = [predictPlayers(team, coeficients) for team in teamsFuturos]
-		#graficar_listas(teamsFuturos, predictedWinRates, actualWinRates)
+		graficar_listas(teamsFuturos, predictedWinRates, actualWinRates)
+		scatter_listas(teamsFuturos, predictedWinRates, actualWinRates)
 		MSE.append(year_mse)
 	return np.average(MSE)
 
