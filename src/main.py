@@ -19,6 +19,10 @@ def filterStats(teamsStats, statsToUse, opponentStatsToUse, miscStatsToUse):
         if len(miscStatsToUse) != None:
             t.misc = t.getMisc(miscStatsToUse)
 
+def filterStatsPlayer(playerStats, statsToUse):
+    for t in playerStats:
+        if len(statsToUse) != None:
+            t.stats = t.getStats(statsToUse)
 
 def cmlGrado1(teamsStats):
     #print len(teamsStats)
@@ -113,6 +117,16 @@ def test():
 
 if __name__ == "__main__":
     teams = read()
-    filterStats(teams, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], [6, 7])
-    MSE = crossvalidation_por_equipo(teams, 3)
-    print MSE
+    #filterStats(teams, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], [6, 7])
+    #MSE = crossvalidation_por_equipo(teams, 3)
+    #print MSE
+
+    #Aca el copipaste de arriba pero para players
+    players = [];
+    for team in teams:
+        filterStatsPlayer(team.players,[17,19,20,21,22,23]);
+        for player in team.players:
+            player.stats.append(team.winRate)
+        players = players+team.players
+    #MSE = crossvalidation_por_jugador(players,3)
+    #print MSE
