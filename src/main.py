@@ -152,6 +152,8 @@ def crossvalidation_por_equipo(teams, years):
         else:
             actualWinRates = [team.winRate for team in teamsFuturos]
             predictedWinRates = [predict(team, coeficients) for team in teamsFuturos]
+            #graficar_listas(teamsFuturos, predictedWinRates, actualWinRates)
+			#scatter_listas(teamsFuturos, predictedWinRates, actualWinRates)
             MSE.append(year_mse)
     return np.average(MSE)
 
@@ -169,13 +171,14 @@ def crossvalidation_por_players(teams, years):
         teamsActuales = [x for x in teams if(x.year == fin_periodo_a_estudiar)]
         teamsFuturos = [x for x in teams if(x.year == actual_a_testear)]
         teamsFuturos, teamsActuales = filtrarTeamsPorNombres(teamsFuturos, teamsActuales)
-        coeficients = cmlGrado1verTeams(teamsAnteriores, 1)
-        year_mse = mse(coeficients, teamsActuales, teamsFuturos)
+        coeficients = cmlGrado1verPlavers(teamsAnteriores, 1)
+        year_mse = msePlayers(coeficients, teamsActuales, teamsFuturos)
         if year_mse > 1:
-            print actual_a_testear
+            #print actual_a_testear
+            one = 1
         else:
             actualWinRates = [team.winRate for team in teamsFuturos]
-            predictedWinRates = [predict(team, coeficients) for team in teamsFuturos]
+            predictedWinRates = [predictPlayers(team, coeficients) for team in teamsFuturos]
             graficar_listas(teamsFuturos, predictedWinRates, actualWinRates)
             scatter_listas(teamsFuturos, predictedWinRates, actualWinRates)
             MSE.append(year_mse)
@@ -217,12 +220,12 @@ if __name__ == "__main__":
 
     teams = [t for t in teams if not(len(t.players)==0)]
 
-    obtenerJugadorPromedio(teams)
+    #obtenerJugadorPromedio(teams)
 
     #Aca el copipaste de arriba pero para players
     for team in teams:
         #filterStatsPlayer(team.players,[17,19,20,21,22,23]);
         #5 8 11 12 15
         filterStatsPlayer(team.players,[0,1,2,3,4,6,7,9,10,13,14,16,17,18,19,20,21,22,23,24])
-    MSE = crossvalidation_por_players(teams, 3)
+    MSE = crossvalidation_por_players(teams, 9)
     print MSE
