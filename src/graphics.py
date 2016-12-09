@@ -7,14 +7,21 @@ def graficar_listas(teamsFuturos, predicted_winRates, actual_winRates):
 	labels = [team.name for team in teamsFuturos]
 	#ffactors = [team.fourFactors for team in teamsFuturos]
 	#per = [team.per for team in teamsFuturos]
-	plt.plot(actual_winRates, 'ro')
-	plt.plot(predicted_winRates, 'bs')
-	#plt.plot(ffactors, 'gt')
-	#plt.plot(per, 'yt')
-	plt.xticks(range(1, len(actual_winRates)), labels, rotation='vertical')
-	plt.plot(predicted_winRates, 'bs')
+	plt.plot(actual_winRates, 'ro', label='Winrate real')
+	plt.plot(predicted_winRates, 'bs', label='Winrate modelado')
+	plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
+           ncol=2, mode="expand", borderaxespad=0.)
+	plt.xticks(range(1, len(actual_winRates)), labels)	
 	plt.margins(0.2)
 	plt.show()
+
+def graficar(lista):
+	labels = range(2, 28)
+	plt.plot(lista, 'r')
+	plt.xticks(range(1, len(lista)), labels)
+	plt.margins(0.2)
+	plt.show()
+	plt.close()
 
 def scatter_listas(teamsFuturos, predicted_winRates, actual_winRates):
 	labels = [team.name for team in teamsFuturos]
