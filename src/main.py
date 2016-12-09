@@ -20,9 +20,9 @@ def filterStats(teamsStats, statsToUse, opponentStatsToUse, miscStatsToUse):
             t.misc = t.getMisc(miscStatsToUse)
 
 def filterStatsPlayer(playerStats, statsToUse):
-    for t in playerStats:
+    for p in playerStats:
         if len(statsToUse) != None:
-            t.stats = t.getStats(statsToUse)
+            p.stats = p.getStats(statsToUse)
 
 def cmlGrado1Players(teams):
     #print len(teamsStats)
@@ -82,6 +82,8 @@ def mse(coeficients, teamsActuales, teamsFuturos):
 def msePlayers(coeficients, teamsActuales, teamsFuturos):
     predictedWinRates = [ predictPlayers(team, coeficients) for team in teamsActuales ]
     actualWinRates = [ team.winRate for team in teamsFuturos ]
+    print predictedWinRates
+    print actualWinRates
     #print max((np.asarray(predictedWinRates) - np.asarray(actualWinRates)) * (np.asarray(predictedWinRates) - np.asarray(actualWinRates)))
     return mean_squared_error(actualWinRates, predictedWinRates)
 
@@ -89,12 +91,12 @@ def predict(team, coeficients):
     return np.dot((team.stats + team.opponent + team.misc), coeficients)
 
 def predictPlayers(team, coeficients):
-	wr_players = []
-	for player in team.players:
-		wr_player = np.dot(player.stats, coeficients)
-		if wr_player > 0.2 and wr_player < 0.9:
-			wr_players.append(wr_player)
-	return np.average(wr_players)
+    wr_players = []
+    for player in team.players:
+        wr_player = np.dot(player.stats, coeficients)
+        if wr_player > 0.2 and wr_player < 0.9:
+            wr_players.append(wr_player)
+    return np.average(wr_players)
 
 def predictTeam(preTeam, statss, opponents, miscs, s_coeficients, o_coeficients, m_coeficients, w_coeficients):
     team = TeamStats()
@@ -144,7 +146,7 @@ def crossvalidation_por_equipo(teams, years):
         teamsActuales = [x for x in teams if(x.year == fin_periodo_a_estudiar)]
         teamsFuturos = [x for x in teams if(x.year == actual_a_testear)]
         teamsFuturos, teamsActuales = filtrarTeamsPorNombres(teamsFuturos, teamsActuales)
-        coeficients = cmlGrado1verTeams(teamsAnteriores, 1)
+        coeficients = cmlGrado1(teamsAnteriores)
         year_mse = mse(coeficients, teamsActuales, teamsFuturos)
         if year_mse > 1:
             #print actual_a_testear
@@ -153,7 +155,7 @@ def crossvalidation_por_equipo(teams, years):
             actualWinRates = [team.winRate for team in teamsFuturos]
             predictedWinRates = [predict(team, coeficients) for team in teamsFuturos]
             #graficar_listas(teamsFuturos, predictedWinRates, actualWinRates)
-			#scatter_listas(teamsFuturos, predictedWinRates, actualWinRates)
+            #scatter_listas(teamsFuturos, predictedWinRates, actualWinRates)
             MSE.append(year_mse)
     return np.average(MSE)
 
@@ -171,33 +173,36 @@ def crossvalidation_por_players(teams, years):
         teamsActuales = [x for x in teams if(x.year == fin_periodo_a_estudiar)]
         teamsFuturos = [x for x in teams if(x.year == actual_a_testear)]
         teamsFuturos, teamsActuales = filtrarTeamsPorNombres(teamsFuturos, teamsActuales)
-        coeficients = cmlGrado1verPlavers(teamsAnteriores, 1)
+        coeficients = cmlGrado1Players(teamsAnteriores)
         year_mse = msePlayers(coeficients, teamsActuales, teamsFuturos)
-        if year_mse > 1:
-            #print actual_a_testear
-            one = 1
-        else:
-            actualWinRates = [team.winRate for team in teamsFuturos]
-            predictedWinRates = [predictPlayers(team, coeficients) for team in teamsFuturos]
-            graficar_listas(teamsFuturos, predictedWinRates, actualWinRates)
-            scatter_listas(teamsFuturos, predictedWinRates, actualWinRates)
-            MSE.append(year_mse)
+        # if year_mse > 1:
+        #     #print actual_a_testear
+        #     one = 1
+        # else:
+        actualWinRates = [team.winRate for team in teamsFuturos]
+        predictedWinRates = [predictPlayers(team, coeficients) for team in teamsFuturos]
+        graficar_listas(teamsFuturos, predictedWinRates, actualWinRates)
+        scatter_listas(teamsFuturos, predictedWinRates, actualWinRates)
+        MSE.append(year_mse)
     return np.average(MSE)
 
 def obtenerJugadorPromedio(teams):
+    # for t in teams:
+    #     #print [p.stats for p in t.players]
+    #     newPlayers = [p for p in t.players if not(p.stats[0]==0)]
+    #     t.players = newPlayers
+    
+    statsLen = len(teams[0].players[0].stats)
     for t in teams:
-        newPlayers = [p for p in t.players if not(p.stats[2]==0)]
-        t.players = newPlayers
-    for t in teams:
-        statsLen = len(t.players[0].stats)
         newPlayer = Player()
         for i in range(0,statsLen):
             statsi = []
             for p in t.players:
                 #print p.stats
                 #print "entre con i" + str(i)
-                statsi.append(p.stats[i]/p.stats[2])
+                statsi.append(p.stats[i])
             newStat = np.average(statsi)
+            #print newStat
             newPlayer.stats.append(newStat)
         t.players = [newPlayer]
 
@@ -215,17 +220,22 @@ def test():
 if __name__ == "__main__":
     teams = read()
     filterStats(teams, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], [6, 7])
-    MSE = crossvalidation_por_equipo(teams, 9)
-    print MSE
+    #MSE = crossvalidation_por_equipo(teams, 9)
+    #print MSE
 
     teams = [t for t in teams if not(len(t.players)==0)]
 
-    #obtenerJugadorPromedio(teams)
-
     #Aca el copipaste de arriba pero para players
+    # for team in teams:
+    #     #filterStatsPlayer(team.players,[17,19,20,21,22,23]);
+    #     #5 8 11 12 15
+    #     filterStatsPlayer(team.players,[2,3,4,5,6,7,8,9,10,11,12,13,14,16,17,18,19,20,21,22,23,24])
     for team in teams:
         #filterStatsPlayer(team.players,[17,19,20,21,22,23]);
         #5 8 11 12 15
-        filterStatsPlayer(team.players,[0,1,2,3,4,6,7,9,10,13,14,16,17,18,19,20,21,22,23,24])
+        filterStatsPlayer(team.players,[2,3,4,6,7,9,10,13,14,16,17,18,19,20,21,22,23,24])
+
+    obtenerJugadorPromedio(teams)
+
     MSE = crossvalidation_por_players(teams, 9)
     print MSE
