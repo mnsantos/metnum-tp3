@@ -80,7 +80,7 @@ def mse(coeficients, teamsActuales):
     return mean_squared_error(actualWinRates, predictedWinRates)
 
 def msePlayers(coeficients, teamsActuales):
-    predictedWinRates = [ predictPlayers(team, coeficients) for team in teamsActuales ]
+    predictedWinRates = [ predictPlayersProm(team, coeficients) for team in teamsActuales ]
     actualWinRates = [ team.winRate for team in teamsActuales ]
     #print predictedWinRates
     #print actualWinRates
@@ -89,6 +89,9 @@ def msePlayers(coeficients, teamsActuales):
 
 def predict(team, coeficients):
     return np.dot((team.stats + team.opponent + team.misc), coeficients)
+
+def predictPlayersProm(team, coeficients):
+    return np.dot(team.players[0].stats, coeficients)
 
 def predictPlayers(team, coeficients):
     wr_players = []
@@ -165,6 +168,7 @@ def crossvalidation_por_players(teams, years):
     cantidad_bloques_a_testear = int((2016-1987) / years)
     tamanio_bloque = years
     for actual_a_testear in range(1987 + tamanio_bloque, 2017):
+        print actual_a_testear
         teamsAnteriores = []
         teamsActuales = []
         inicio_periodo_a_estudiar = actual_a_testear - tamanio_bloque
@@ -180,10 +184,10 @@ def crossvalidation_por_players(teams, years):
             one = 1
         else:
             actualWinRates = [team.winRate for team in teamsActuales]
-            predictedWinRates = [predictPlayers(team, coeficients) for team in teamsActuales]
+            predictedWinRates = [predictPlayersProm(team, coeficients) for team in teamsActuales]
             graficar_listas(teamsActuales, predictedWinRates, actualWinRates)
             scatter_listas(teamsActuales, predictedWinRates, actualWinRates)
-        print year_mse
+        print year_mse  
         MSE.append(year_mse)
     return np.average(MSE)
 
