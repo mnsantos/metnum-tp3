@@ -11,7 +11,7 @@ def graficar_listas(teamsFuturos, predicted_winRates, actual_winRates):
 	plt.plot(predicted_winRates, 'bs', label='Winrate modelado')
 	plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
            ncol=2, mode="expand", borderaxespad=0.)
-	plt.xticks(range(1, len(actual_winRates)), labels)	
+	plt.xticks(range(0, len(actual_winRates)), labels)	
 	plt.margins(0.2)
 	plt.show()
 
@@ -27,6 +27,8 @@ def scatter_listas(teamsFuturos, predicted_winRates, actual_winRates):
 	labels = [team.name for team in teamsFuturos]
 	ffactors = [team.fourFactors for team in teamsFuturos]
 	per = [team.per for team in teamsFuturos]
+	print "PER:"
+	print per
 	#plt.xticks(range(1, len(actual_winRates)), labels, rotation='vertical')
 	plt.title('ffactors')
 	plt.scatter(ffactors, predicted_winRates, c='b', alpha=0.5)
@@ -124,41 +126,61 @@ def graficarPrediccion(teamsActuales, teamsFuturos, coeficients):
 #Ordena la lista teams por winrate y grafica las metricas para ver si existe correlacion entre los valores
 def graficarMetricas(teams):
 	fig = plt.figure()
-	#fig.suptitle('Precision: '+str(precision)+'\ne='+str(e), fontsize=15)
+	#names = ['fg%vsWinRate', '3p%vsWinRate', '2p%vsWinRate', 'ptsvsWinRate', 'ptsPerGameVsWinRate', 'drbVsWinRate']
+	names = ['fg%againstvsWinRate', '2p%againstvsWinRate', 'astvsWinRate','ptsAgainsVsWinRate', 'ptsAgainsPerGameVsWinRate']
+
 	teams.sort(key = lambda x: x.winRate)
-	wr = []
-	sts = [[] for y in range(len(teams[0].stats))]
-	opponents = [[] for y in range(len(teams[0].opponent))]
-	miscs = [[] for y in range(len(teams[0].misc))]
+	j=0
+	#for i in [4, 7, 10, 22, 23, 15]:
+	for i in [4, 10, 17, 22, 2]:
+		xs = []
+		ys = []
+		for t in teams:
+			plt.xlabel('Estadistica')
+			plt.ylabel('WinRate')
+			#print t.misc
+			#print t.stats[i]
+			xs.append(t.opponent[i])
+			ys.append(t.winRate)
+		plt.plot(xs, ys, 'ro')
+		plt.savefig(names[j] + '.png')
+		fig.clear()
+		j = j+1
+	#fig.suptitle('Precision: '+str(precision)+'\ne='+str(e), fontsize=15)
+	#teams.sort(key = lambda x: x.winRate)
+	# wr = []
+	# sts = [[] for y in range(len(teams[0].stats))]
+	# opponents = [[] for y in range(len(teams[0].opponent))]
+	# miscs = [[] for y in range(len(teams[0].misc))]
 	
-	normalizarStats(teams)
+	#normalizarStats(teams)
 	
-	for team in teams:
-		wr.append(team.winRate)
-		for i in xrange(0,len(team.stats)):
-			sts[i].append(team.stats[i])
-		for i in xrange(0,len(team.opponent)):
-			opponents[i].append(team.opponent[i])
-		for i in xrange(0,len(team.misc)):
-			miscs[i].append(team.misc[i])
+	# for team in teams:
+	# 	wr.append(team.winRate)
+	# 	for i in xrange(0,len(team.stats)):
+	# 		sts[i].append(team.stats[i])
+	# 	for i in xrange(0,len(team.opponent)):
+	# 		opponents[i].append(team.opponent[i])
+	# 	for i in xrange(0,len(team.misc)):
+	# 		miscs[i].append(team.misc[i])
 
-	for i in xrange(0,len(sts)):
-		#print i
-		plt.plot(wr, 'r')
-		plt.plot(sts[i], 'b')
-		plt.show()
+	# for i in xrange(0,len(sts)):
+	# 	#print i
+	# 	plt.plot(wr, 'r')
+	# 	plt.plot(sts[i], 'b')
+	# 	plt.show()
 
-	for i in xrange(0,len(opponents)):
-		print i
-		plt.plot(wr, 'r')
-		plt.plot(opponents[i], 'b')
-		plt.show()
+	# for i in xrange(0,len(opponents)):
+	# 	print i
+	# 	plt.plot(wr, 'r')
+	# 	plt.plot(opponents[i], 'b')
+	# 	plt.show()
 
-	for i in xrange(0,len(miscs)):
-		print i
-		plt.plot(wr, 'r')
-		plt.plot(miscs[i], 'b')
-		plt.show()
+	# for i in xrange(0,len(miscs)):
+	# 	print i
+	# 	plt.plot(wr, 'r')
+	# 	plt.plot(miscs[i], 'b')
+	# 	plt.show()
 
 
 
